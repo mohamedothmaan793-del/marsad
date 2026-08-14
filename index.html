@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>مرصد — لوحة المراجعة المالية</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700&display=swap');
+:root{--bg:#0b0b0d;--side:#101014;--panel:#151519;--panel2:#1b1b20;--line:#2a2a30;--muted:#96969f;--text:#f4f2f1;--red:#bd3034;--red2:#e04c50;--green:#4cbb82;--amber:#e4a94b;--blue:#628de8}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px Alexandria,Arial,sans-serif}
+.app{display:flex;min-height:100vh}
+.side{width:260px;background:var(--side);border-left:1px solid var(--line);padding:24px 14px;position:fixed;right:0;top:0;bottom:0}
+.brand{display:flex;align-items:center;gap:11px;padding:0 11px 29px;border-bottom:1px solid var(--line);margin-bottom:20px}
+.mark{width:37px;height:37px;border:1px solid #803135;border-radius:11px;display:grid;place-items:center;color:#fa6064;font-size:20px;font-weight:700;background:#251216}
+.brand b{font-size:20px}.brand small{display:block;color:var(--muted);font-size:10px;margin-top:2px}
+.nav{display:flex;flex-direction:column;gap:4px}
+.nav button{color:#a7a7af;background:transparent;border:0;border-radius:8px;text-align:right;padding:11px 12px;font-family:inherit;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:10px;width:100%}
+.nav button:hover,.nav button.active{background:#241417;color:#fff}
+.nav button.active{box-shadow:inset -2px 0 var(--red)}
+.content{width:calc(100% - 260px);margin-right:260px;padding:29px 38px 50px;max-width:1650px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
+.top h1{margin:0;font-size:24px}
+.grid{display:grid;gap:14px}
+.metrics{grid-template-columns:repeat(4,1fr);margin-bottom:20px}
+.metric{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 17px;min-height:115px}
+.metric .label{font-size:12px;color:#aaaab2}
+.metric .value{font-weight:600;font-size:22px;margin:13px 0 8px;color:var(--green)}
+.section{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px;margin-top:20px}
+.section h2{font-size:16px;margin:0 0 15px 0}
+.trial-banner{background:#292215;border:1px solid #e6b458;color:#e6b458;padding:12px 20px;border-radius:8px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center}
+</style>
+<!-- مكتبة Supabase للاتصال بقاعدة البيانات مباشرة من المتصفح -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div class="app">
+  <aside class="side">
+    <div class="brand">
+      <div class="mark">م</div>
+      <div><b>مرصد</b><small>الإدارة المالية والسيولة</small></div>
+    </div>
+    <nav class="nav">
+      <button class="active"><i>▦</i><span>لوحة التحكم</span></button>
+      <button><i>◉</i><span>العملاء والمستحقات</span></button>
+      <button><i>▣</i><span>البنوك والخزائن</span></button>
+      <button><i>↕</i><span>الحركات المالية</span></button>
+    </nav>
+  </aside>
+
+  <main class="content">
+    <div class="trial-banner">
+      <span>تجربتك المجانية الاحترافية نشطة (متبقي 14 يوم على انتهاء التجربة)</span>
+      <b id="statusText">نسخة تجريبية حقيقية</b>
+    </div>
+
+    <header class="top">
+      <div>
+        <div style="color:var(--muted);font-size:12px;margin-bottom:5px">شركة النخبة · لوحة القيادة</div>
+        <h1>أهلاً بك يا شريك، إليك موقفك المالي الآن</h1>
+      </div>
+    </header>
+
+    <section class="grid metrics">
+      <article class="metric">
+        <div class="label">السيولة الحالية</div>
+        <div class="value" id="liquidityVal">جاري التحميل...</div>
+      </article>
+      <article class="metric">
+        <div class="label">ما لك عند العملاء</div>
+        <div class="value" style="color:var(--red2)" id="receivablesVal">جاري التحميل...</div>
+      </article>
+      <article class="metric">
+        <div class="label">ما عليك للموردين</div>
+        <div class="value" style="color:var(--amber)" id="payablesVal">جاري التحميل...</div>
+      </article>
+      <article class="metric">
+        <div class="label">صافي حركة الشهر</div>
+        <div class="value" style="color:var(--blue)" id="netflowVal">جاري التحميل...</div>
+      </article>
+    </section>
+
+    <section class="section">
+      <h2>حالة النظام وقاعدة البيانات</h2>
+      <p style="color:var(--muted);font-size:13px;line-height:1.6">
+        تم ربط واجهة <b>مرصد</b> بنجاح مع قاعدة بيانات Supabase الاحترافية الخاصة بك.<br>
+        في الخطوات القادمة سنقوم بإضافة الأزرار وإدخال البيانات الحقيقية للعملاء والحركات لتظهر هنا فوراً.
+      </p>
+    </section>
+  </main>
+</div>
+
+<script>
+  // بيانات الاتصال الخاصة بك بقاعدة البيانات
+  const SUPABASE_URL = 'https://fleuwvsgvotkurphekif.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_6o2sgbxpnjfm-EWyfcD0cg_y5WOxtX1';
+  
+  const { createClient } = window.supabase;
+  const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  async function checkConnection() {
+    try {
+      // تجربة سحب بيانات بسيطة للتأكد من الاتصال بقاعدة البيانات
+      const { data, error } = await _supabase.from('companies').select('*');
+      if (error) {
+        console.error(error);
+        document.getElementById('liquidityVal').textContent = 'خطأ في الاتصال';
+      } else {
+        // لو الاتصال ناجح، نعرض بيانات تجريبية مؤقتة لحد ما ندخل الفواتير الحقيقية
+        document.getElementById('liquidityVal').textContent = '1,284,650 ج.م';
+        document.getElementById('receivablesVal').textContent = '842,390 ج.م';
+        document.getElementById('payablesVal').textContent = '517,820 ج.م';
+        document.getElementById('netflowVal').textContent = '+326,140 ج.م';
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  checkConnection();
+</script>
+
+</body>
+</html>
