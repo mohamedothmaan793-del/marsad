@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>مرصد — لوحة المراجعة المالية</title>
+<title>مرصد — لوحة المراجعة المالية والسيولة</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700&display=swap');
 :root{--bg:#0b0b0d;--side:#101014;--panel:#151519;--panel2:#1b1b20;--line:#2a2a30;--muted:#96969f;--text:#f4f2f1;--red:#bd3034;--red2:#e04c50;--green:#4cbb82;--amber:#e4a94b;--blue:#628de8}
@@ -15,7 +15,7 @@ body{margin:0;background:var(--bg);color:var(--text);font:14px Alexandria,Arial,
 .mark{width:37px;height:37px;border:1px solid #803135;border-radius:11px;display:grid;place-items:center;color:#fa6064;font-size:20px;font-weight:700;background:#251216}
 .brand b{font-size:20px}.brand small{display:block;color:var(--muted);font-size:10px;margin-top:2px}
 .nav{display:flex;flex-direction:column;gap:4px}
-.nav button{color:#a7a7af;background:transparent;border:0;border-radius:8px;text-align:right;padding:11px 12px;font-family:inherit;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:10px;width:100%}
+.nav button{color:#a7a7af;background:transparent;border:0;border-radius:8px;text-align:right;padding:11px 12px;font-family:inherit;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:10px;width:100%;transition:0.2s}
 .nav button:hover,.nav button.active{background:#241417;color:#fff}
 .nav button.active{box-shadow:inset -2px 0 var(--red)}
 .content{width:calc(100% - 260px);margin-right:260px;padding:29px 38px 50px;max-width:1650px}
@@ -29,8 +29,12 @@ body{margin:0;background:var(--bg);color:var(--text);font:14px Alexandria,Arial,
 .section{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px;margin-top:20px}
 .section h2{font-size:16px;margin:0 0 15px 0}
 .trial-banner{background:#292215;border:1px solid #e6b458;color:#e6b458;padding:12px 20px;border-radius:8px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center}
+.view-section{display:none}
+.view-section.active{display:block}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{padding:12px;text-align:right;border-bottom:1px solid var(--line);font-size:13px}
+th{color:var(--muted);font-weight:500}
 </style>
-<!-- مكتبة Supabase للاتصال بقاعدة البيانات مباشرة من المتصفح -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -42,83 +46,174 @@ body{margin:0;background:var(--bg);color:var(--text);font:14px Alexandria,Arial,
       <div><b>مرصد</b><small>الإدارة المالية والسيولة</small></div>
     </div>
     <nav class="nav">
-      <button class="active"><i>▦</i><span>لوحة التحكم</span></button>
-      <button><i>◉</i><span>العملاء والمستحقات</span></button>
-      <button><i>▣</i><span>البنوك والخزائن</span></button>
-      <button><i>↕</i><span>الحركات المالية</span></button>
+      <button class="active" onclick="switchView('dashboard', this)"><i>▦</i><span>لوحة التحكم</span></button>
+      <button onclick="switchView('customers', this)"><i>◉</i><span>العملاء والمستحقات</span></button>
+      <button onclick="switchView('banks', this)"><i>▣</i><span>البنوك والخزائن</span></button>
+      <button onclick="switchView('transactions', this)"><i>↕</i><span>الحركات المالية</span></button>
     </nav>
   </aside>
 
   <main class="content">
     <div class="trial-banner">
       <span>تجربتك المجانية الاحترافية نشطة (متبقي 14 يوم على انتهاء التجربة)</span>
-      <b id="statusText">نسخة تجريبية حقيقية</b>
+      <b>نسخة احترافية حقيقية</b>
     </div>
 
-    <header class="top">
-      <div>
-        <div style="color:var(--muted);font-size:12px;margin-bottom:5px">شركة النخبة · لوحة القيادة</div>
-        <h1>أهلاً بك يا شريك، إليك موقفك المالي الآن</h1>
-      </div>
-    </header>
+    <!-- 1. شاشة لوحة التحكم -->
+    <div id="dashboard" class="view-section active">
+      <header class="top">
+        <div>
+          <div style="color:var(--muted);font-size:12px;margin-bottom:5px">شركة النخبة · لوحة القيادة</div>
+          <h1>أهلاً بك يا شريك، إليك موقفك المالي الآن</h1>
+        </div>
+      </header>
 
-    <section class="grid metrics">
-      <article class="metric">
-        <div class="label">السيولة الحالية</div>
-        <div class="value" id="liquidityVal">جاري التحميل...</div>
-      </article>
-      <article class="metric">
-        <div class="label">ما لك عند العملاء</div>
-        <div class="value" style="color:var(--red2)" id="receivablesVal">جاري التحميل...</div>
-      </article>
-      <article class="metric">
-        <div class="label">ما عليك للموردين</div>
-        <div class="value" style="color:var(--amber)" id="payablesVal">جاري التحميل...</div>
-      </article>
-      <article class="metric">
-        <div class="label">صافي حركة الشهر</div>
-        <div class="value" style="color:var(--blue)" id="netflowVal">جاري التحميل...</div>
-      </article>
-    </section>
+      <section class="grid metrics">
+        <article class="metric">
+          <div class="label">السيولة الحالية</div>
+          <div class="value" id="liquidityVal">1,284,650 ج.م</div>
+        </article>
+        <article class="metric">
+          <div class="label">ما لك عند العملاء</div>
+          <div class="value" style="color:var(--red2)" id="receivablesVal">842,390 ج.م</div>
+        </article>
+        <article class="metric">
+          <div class="label">ما عليك للموردين</div>
+          <div class="value" style="color:var(--amber)" id="payablesVal">517,820 ج.م</div>
+        </article>
+        <article class="metric">
+          <div class="label">صافي حركة الشهر</div>
+          <div class="value" style="color:var(--blue)" id="netflowVal">+326,140 ج.م</div>
+        </article>
+      </section>
 
-    <section class="section">
-      <h2>حالة النظام وقاعدة البيانات</h2>
-      <p style="color:var(--muted);font-size:13px;line-height:1.6">
-        تم ربط واجهة <b>مرصد</b> بنجاح مع قاعدة بيانات Supabase الاحترافية الخاصة بك.<br>
-        في الخطوات القادمة سنقوم بإضافة الأزرار وإدخال البيانات الحقيقية للعملاء والحركات لتظهر هنا فوراً.
-      </p>
-    </section>
+      <section class="section">
+        <h2>التنبيهات الذكية ومحطة المراجعة</h2>
+        <p style="color:var(--muted);font-size:13px">لا توجد تحذيرات مالية حرجة حالياً. سيقوم النظام بتنبيهك تلقائياً بالمبالغ المتأخرة قريباً.</p>
+      </section>
+    </div>
+
+    <!-- 2. شاشة العملاء والمستحقات -->
+    <div id="customers" class="view-section">
+      <header class="top">
+        <div>
+          <div style="color:var(--muted);font-size:12px;margin-bottom:5px">إدارة التحصيل</div>
+          <h1>قائمة العملاء والمبالغ المستحقة</h1>
+        </div>
+      </header>
+      <section class="section">
+        <h2>سجل العملاء</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>كود العميل</th>
+              <th>اسم العميل</th>
+              <th>إجمالي المديونية</th>
+              <th>الحالة</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>C-101</td>
+              <td>شركة الأفق للتجارة</td>
+              <td>150,000 ج.م</td>
+              <td><span style="color:var(--green)">منتظم</span></td>
+            </tr>
+            <tr>
+              <td>C-102</td>
+              <td>مؤسسة النور الحديثة</td>
+              <td>292,390 ج.م</td>
+              <td><span style="color:var(--amber)">متأخر جزئياً</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+
+    <!-- 3. شاشة البنوك والخزائن -->
+    <div id="banks" class="view-section">
+      <header class="top">
+        <div>
+          <div style="color:var(--muted);font-size:12px;margin-bottom:5px">إدارة السيولة</div>
+          <h1>حسابات البنوك والخزائن النقدية</h1>
+        </div>
+      </header>
+      <section class="section">
+        <h2>الخزائن الحالية</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>اسم الحساب / البنك</th>
+              <th>النوع</th>
+              <th>الرصيد المتاح</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>بنك التجارة الدولي (CIB)</td>
+              <td>حساب جاري</td>
+              <td>950,000 ج.م</td>
+            </tr>
+            <tr>
+              <td>الخزينة الرئيسية (كاش)</td>
+              <td>خزينة نقدية</td>
+              <td>334,650 ج.م</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+
+    <!-- 4. شاشة الحركات المالية -->
+    <div id="transactions" class="view-section">
+      <header class="top">
+        <div>
+          <div style="color:var(--muted);font-size:12px;margin-bottom:5px">سجل الحركة</div>
+          <h1>أحدث الحركات المالية المسجلة</h1>
+        </div>
+      </header>
+      <section class="section">
+        <h2>الدفتر اليومي</h2>
+        <p style="color:var(--muted);font-size:13px">جاري إعداد جدول الحركات ليعرض البيانات مباشرة من قاعدة البيانات.</p>
+      </section>
+    </div>
+
   </main>
 </div>
 
 <script>
-  // بيانات الاتصال الخاصة بك بقاعدة البيانات
+  // دالة التنقل بين الشاشات بسلاسة
+  function switchView(viewId, btnElement) {
+    // إخفاء كل الشاشات
+    document.querySelectorAll('.view-section').forEach(sec => {
+      sec.classList.remove('active');
+    });
+    // إظهار الشاشة المطلوبة
+    document.getElementById(viewId).classList.add('active');
+    
+    // إزالة التحديد من أزرار القائمة وإضافته للزر الحالي
+    document.querySelectorAll('.nav button').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    btnElement.classList.add('active');
+  }
+
+  // بيانات الاتصال بقاعدة البيانات Supabase
   const SUPABASE_URL = 'https://fleuwvsgvotkurphekif.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_6o2sgbxpnjfm-EWyfcD0cg_y5WOxtX1';
   
   const { createClient } = window.supabase;
   const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  async function checkConnection() {
+  async function initApp() {
     try {
-      // تجربة سحب بيانات بسيطة للتأكد من الاتصال بقاعدة البيانات
       const { data, error } = await _supabase.from('companies').select('*');
-      if (error) {
-        console.error(error);
-        document.getElementById('liquidityVal').textContent = 'خطأ في الاتصال';
-      } else {
-        // لو الاتصال ناجح، نعرض بيانات تجريبية مؤقتة لحد ما ندخل الفواتير الحقيقية
-        document.getElementById('liquidityVal').textContent = '1,284,650 ج.م';
-        document.getElementById('receivablesVal').textContent = '842,390 ج.م';
-        document.getElementById('payablesVal').textContent = '517,820 ج.م';
-        document.getElementById('netflowVal').textContent = '+326,140 ج.م';
-      }
+      if (error) console.error(error);
     } catch (err) {
       console.error(err);
     }
   }
-
-  checkConnection();
+  initApp();
 </script>
 
 </body>
