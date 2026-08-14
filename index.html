@@ -3,172 +3,389 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>مرصد — مراجعة بوضوح</title>
+<title>مرصد — النظام المالي الذكي</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700&display=swap');
-:root{--bg:#0b0b0d;--side:#101014;--panel:#151519;--panel2:#1b1b20;--line:#2a2a30;--muted:#96969f;--text:#f4f2f1;--red:#bd3034;--red2:#e04c50;--green:#4cbb82;--amber:#e4a94b;--blue:#628de8}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font:13px Alexandria,Arial,sans-serif}
-.app{display:flex;min-height:100vh}
+@import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&display=swap');
 
-/* القائمة الجانبية */
-.side{width:260px;background:var(--side);border-left:1px solid var(--line);padding:24px 14px;position:fixed;right:0;top:0;bottom:0;overflow-y:auto}
-.brand{display:flex;align-items:center;justify-content:space-between;padding:0 11px 24px;border-bottom:1px solid var(--line);margin-bottom:20px}
-.brand-left{display:flex;align-items:center;gap:11px}
-.mark{width:35px;height:35px;border:1px solid #803135;border-radius:10px;display:grid;place-items:center;color:#fa6064;font-size:18px;font-weight:700;background:#251216}
-.brand b{font-size:18px}.brand small{display:block;color:var(--muted);font-size:10px;margin-top:2px}
-.nav-group{font-size:11px;color:var(--muted);margin:15px 10px 5px;font-weight:600}
-.nav{display:flex;flex-direction:column;gap:3px}
-.nav button{color:#a7a7af;background:transparent;border:0;border-radius:8px;text-align:right;padding:10px 12px;font-family:inherit;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:10px;width:100%;transition:0.2s}
-.nav button:hover,.nav button.active{background:#241417;color:#fff}
-.nav button.active{box-shadow:inset -2px 0 var(--red)}
+:root {
+  --bg: #09090b;
+  --sidebar: #121216;
+  --sidebar-w: 260px;
+  --sidebar-collapsed: 72px;
+  --card: #16161c;
+  --card-hover: #1c1c24;
+  --border: #22222d;
+  --text-main: #f4f4f5;
+  --text-muted: #9191a1;
+  --accent: #6366f1; /* لون عصري أنيق (Indigo) */
+  --accent-glow: rgba(99, 102, 241, 0.15);
+  --danger: #f43f5e;
+  --success: #10b981;
+  --warning: #f59e0b;
+}
 
-/* محتوى الصفحة */
-.content{width:calc(100% - 260px);margin-right:260px;padding:25px 35px 50px;max-width:1600px}
-.top-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:25px;border-bottom:1px solid var(--line);padding-bottom:20px}
-.greeting h1{margin:5px 0 0 0;font-size:22px;font-weight:600}
-.meta-info{color:var(--muted);font-size:12px}
-.actions-top{display:flex;gap:12px;align-items:center}
-.btn-primary{background:var(--red);color:#fff;border:0;padding:10px 18px;border-radius:8px;font-family:inherit;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:13px}
-.btn-primary:hover{background:var(--red2)}
-.btn-outline{background:var(--panel);color:var(--text);border:1px solid var(--line);padding:10px 16px;border-radius:8px;font-family:inherit;cursor:pointer;font-size:13px}
+* { box-sizing: border-box; transition: all 0.2s ease; }
+body { margin: 0; background: var(--bg); color: var(--text-main); font: 13.5px 'Alexandria', sans-serif; }
 
-/* المربعات والشبكات */
-.grid-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
-.metric-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;position:relative}
-.metric-title{font-size:12px;color:var(--muted)}
-.metric-val{font-size:22px;font-weight:700;margin:10px 0 6px}
-.metric-trend{font-size:11px;display:flex;align-items:center;gap:5px}
+.app { display: flex; min-height: 100vh; }
 
-/* الأقسام السفلية (تنبيهات ورسوم) */
-.dashboard-grid{display:grid;grid-template-columns: 1fr 1.4fr;gap:20px}
-.card-section{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px}
-.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
-.card-header h3{margin:0;font-size:15px}
+/* الشريط الجانبي القابل للطي */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--sidebar);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 100;
+  overflow-x: hidden;
+}
 
-.alert-item{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:12px 15px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start}
-.alert-icon{width:28px;height:28px;border-radius:6px;display:grid;place-items:center;font-size:14px;flex-shrink:0}
-.alert-content b{display:block;font-size:13px;margin-bottom:3px}
-.alert-content p{margin:0;color:var(--muted);font-size:12px}
-.alert-action{color:var(--red2);font-size:11px;text-decoration:none;font-weight:600;display:inline-block;margin-top:6px}
+.sidebar.collapsed {
+  width: var(--sidebar-collapsed);
+}
 
-.view-section{display:none}
-.view-section.active{display:block}
+.sidebar-header {
+  padding: 20px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+
+.brand-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap;
+}
+
+.brand-logo {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--accent), #4f46e5);
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 18px;
+  box-shadow: 0 4px 12px var(--accent-glow);
+  flex-shrink: 0;
+}
+
+.brand-text b { display: block; font-size: 16px; letter-spacing: -0.3px; }
+.brand-text small { color: var(--text-muted); font-size: 10px; }
+
+.sidebar.collapsed .brand-text,
+.sidebar.collapsed .nav-section-title,
+.sidebar.collapsed .nav-item span {
+  display: none;
+}
+
+.toggle-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+}
+.toggle-btn:hover { background: var(--card); color: #fff; }
+
+.sidebar-body {
+  padding: 16px 10px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.nav-section-title {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.8px;
+  margin: 16px 10px 8px;
+  font-weight: 600;
+}
+
+.nav-list { display: flex; flex-direction: column; gap: 4px; }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: transparent;
+  border: 0;
+  color: var(--text-muted);
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  text-align: right;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.nav-item i { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
+.nav-item:hover { background: var(--card); color: #fff; }
+.nav-item.active { background: var(--accent-glow); color: var(--accent); border-right: 2px solid var(--accent); }
+
+/* منطقة المحتوى الرئيسى */
+.main-content {
+  flex: 1;
+  margin-right: var(--sidebar-w);
+  padding: 30px 40px;
+  max-width: 1600px;
+  transition: margin-right 0.2s ease;
+}
+
+.sidebar.collapsed ~ .main-content {
+  margin-right: var(--sidebar-collapsed);
+}
+
+/* الهيدر العلوي */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 16px 24px;
+  border-radius: 14px;
+}
+
+.welcome-box h1 { margin: 0 0 4px 0; font-size: 20px; font-weight: 600; }
+.welcome-box p { margin: 0; color: var(--text-muted); font-size: 12px; }
+
+.top-actions { display: flex; gap: 10px; align-items: center; }
+.btn {
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-sub { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
+.btn-sub:hover { background: var(--card-hover); }
+.btn-main { background: var(--accent); border: 0; color: #fff; box-shadow: 0 4px 12px var(--accent-glow); }
+.btn-main:hover { opacity: 0.9; }
+
+/* كاردات المؤشرات المتقدمة */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.metric-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-box::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0; left: 0;
+  height: 2px;
+  background: var(--accent);
+  opacity: 0.3;
+}
+
+.metric-label { color: var(--text-muted); font-size: 12px; font-weight: 500; }
+.metric-number { font-size: 24px; font-weight: 700; margin: 12px 0 8px; letter-spacing: -0.5px; }
+.metric-footer { display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: var(--text-muted); }
+
+/* الأقسام السفلية */
+.content-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 20px;
+}
+
+.panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.panel-header h3 { margin: 0; font-size: 15px; font-weight: 600; }
+
+.alert-card {
+  background: #181820;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.alert-icon { font-size: 16px; padding-top: 2px; }
+.alert-body b { display: block; font-size: 13px; margin-bottom: 2px; }
+.alert-body p { margin: 0; color: var(--text-muted); font-size: 12px; }
+
+.view-section { display: none; }
+.view-section.active { display: block; }
+
+@media(max-width: 1024px) {
+  .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+  .content-grid { grid-template-columns: 1fr; }
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
 <div class="app">
-  <!-- القائمة الجانبية الاحترافية -->
-  <aside class="side">
-    <div class="brand">
-      <div class="brand-left">
-        <div class="mark">م</div>
-        <div><b>مرصد</b><small>مراجعة بوضوح</small></div>
+  
+  <!-- الشريط الجانبي القابل للطي -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="brand-info">
+        <div class="brand-logo">م</div>
+        <div class="brand-text">
+          <b>مرصد</b>
+          <small>الإدارة الذكية</small>
+        </div>
+      </div>
+      <button class="toggle-btn" onclick="toggleSidebar()" title="طي/توسيع القائمة">⇄</button>
+    </div>
+
+    <div class="sidebar-body">
+      <div class="nav-section-title">الرئيسية</div>
+      <div class="nav-list">
+        <button class="nav-item active" onclick="switchView('dashboard', this)"><i>⚡</i><span>لوحة القيادة</span></button>
+        <button class="nav-item" onclick="switchView('customers', this)"><i>👥</i><span>العملاء والتحصيل</span></button>
+        <button class="nav-item" onclick="switchView('suppliers', this)"><i>📦</i><span>الموردين</span></button>
+        <button class="nav-item" onclick="switchView('banks', this)"><i>🏦</i><span>البنوك والخزائن</span></button>
+      </div>
+
+      <div class="nav-section-title">العمليات</div>
+      <div class="nav-list">
+        <button class="nav-item"><i>📑</i><span>فواتير المبيعات</span></button>
+        <button class="nav-item"><i>📊</i><span>حركة التدفقات</span></button>
+        <button class="nav-item"><i>🤖</i><span>المساعد الذكي (قريباً)</span></button>
       </div>
     </div>
-    
-    <div class="nav-group">نظرة عامة</div>
-    <nav class="nav">
-      <button class="active" onclick="switchView('dashboard', this)"><i>▦</i><span>لوحة التحكم</span></button>
-      <button onclick="switchView('customers', this)"><i>◉</i><span>العملاء</span></button>
-      <button onclick="switchView('suppliers', this)"><i>▣</i><span>الموردين</span></button>
-      <button onclick="switchView('banks', this)"><i>▤</i><span>البنوك والخزائن</span></button>
-      <button onclick="switchView('transactions', this)"><i>↕</i><span>الحركات المالية</span></button>
-    </nav>
-
-    <div class="nav-group">التسجيل والمراجعة</div>
-    <nav class="nav">
-      <button><i>📄</i><span>فواتير العملاء</span></button>
-      <button><i>📑</i><span>فواتير الموردين</span></button>
-      <button><i>💵</i><span>سندات القبض والصرف</span></button>
-      <button><i>🚨</i><span>مركز المراجعة</span></button>
-    </nav>
   </aside>
 
   <!-- المحتوى الرئيسي -->
-  <main class="content">
+  <main class="main-content">
     
-    <!-- الشريط العلوي -->
-    <header class="top-header">
-      <div class="greeting">
-        <div class="meta-info">شركة النخبة للتجارة والتوزيع · 13 أغسطس 2026</div>
-        <h1>صباح الخير، محمود</h1>
+    <!-- هيدر علوي فخم -->
+    <header class="top-bar">
+      <div class="welcome-box">
+        <h1>صباح الخير، محمود 👋</h1>
+        <p>شركة النخبة للتجارة · آخر تحديث منذ دقيقتين</p>
       </div>
-      <div class="actions-top">
-        <button class="btn-outline">تخصيص اللوحة</button>
-        <button class="btn-primary"><span>+ تسجيل حركة</span></button>
+      <div class="top-actions">
+        <button class="btn btn-sub">تخصيص اللوحة</button>
+        <button class="btn btn-main"><span>+ تسجيل حركة جديدة</span></button>
       </div>
     </header>
 
-    <!-- شاشة لوحة التحكم الرئيسية -->
+    <!-- لوحة القيادة -->
     <div id="dashboard" class="view-section active">
       
-      <!-- كاردات المؤشرات الأربعة -->
-      <section class="grid-metrics">
-        <article class="metric-card">
-          <div class="metric-title">السيولة الحالية</div>
-          <div class="metric-val" style="color:var(--text)">1,284,650 <span style="font-size:14px;color:var(--muted)">ج.م</span></div>
-          <div class="metric-trend" style="color:var(--green)">▲ 8.4% عن الشهر السابق</div>
-        </article>
-        
-        <article class="metric-card">
-          <div class="metric-title">ما لك عند العملاء</div>
-          <div class="metric-val" style="color:var(--red2)">842,390 <span style="font-size:14px;color:var(--muted)">ج.م</span></div>
-          <div class="metric-trend" style="color:var(--muted)">منها 186,750 متأخر</div>
-        </article>
+      <!-- الكاردات -->
+      <section class="metrics-grid">
+        <div class="metric-box">
+          <div class="metric-label">السيولة النقدية الحالية</div>
+          <div class="metric-number" style="color:var(--text-main);">1,284,650 <span style="font-size:14px;color:var(--text-muted);font-weight:400">ج.م</span></div>
+          <div class="metric-footer">
+            <span style="color:var(--success)">▲ +8.4% عن الشهر السابق</span>
+            <span>محدث</span>
+          </div>
+        </div>
 
-        <article class="metric-card">
-          <div class="metric-title">ما عليك للموردين</div>
-          <div class="metric-val" style="color:var(--amber)">517,820 <span style="font-size:14px;color:var(--muted)">ج.م</span></div>
-          <div class="metric-trend" style="color:var(--green)">▼ 4.1% عن الشهر السابق</div>
-        </article>
+        <div class="metric-box">
+          <div class="metric-label">إجمالي مستحقات العملاء</div>
+          <div class="metric-number" style="color:var(--danger);">842,390 <span style="font-size:14px;color:var(--text-muted);font-weight:400">ج.م</span></div>
+          <div class="metric-footer">
+            <span>منها 186 ألف متأخر</span>
+            <span style="color:var(--danger)">متابعة مطلوبة</span>
+          </div>
+        </div>
 
-        <article class="metric-card">
-          <div class="metric-title">صافي حركة الشهر</div>
-          <div class="metric-val" style="color:var(--blue)">326,140+ <span style="font-size:14px;color:var(--muted)">ج.م</span></div>
-          <div class="metric-trend" style="color:var(--green)">▲ 12.7% مقارنة بيوليو</div>
-        </article>
+        <div class="metric-box">
+          <div class="metric-label">التزامات الموردين</div>
+          <div class="metric-number" style="color:var(--warning);">517,820 <span style="font-size:14px;color:var(--text-muted);font-weight:400">ج.م</span></div>
+          <div class="metric-footer">
+            <span style="color:var(--success)">▼ -4.1% تحسن</span>
+            <span>منتظم</span>
+          </div>
+        </div>
+
+        <div class="metric-box">
+          <div class="metric-label">صافي تدفقات الشهر</div>
+          <div class="metric-number" style="color:var(--accent);">+326,140 <span style="font-size:14px;color:var(--text-muted);font-weight:400">ج.م</span></div>
+          <div class="metric-footer">
+            <span style="color:var(--success)">أداء ممتاز</span>
+            <span>أغسطس 2026</span>
+          </div>
+        </div>
       </section>
 
-      <!-- الأقسام السفلية (التنبيهات وحركة الأموال) -->
-      <div class="dashboard-grid">
+      <!-- الأقسام السفلية -->
+      <div class="content-grid">
         
-        <!-- التنبيهات -->
-        <div class="card-section">
-          <div class="card-header">
-            <h3>يحتاج إلى مراجعتك</h3>
-            <span style="background:#241417;color:var(--red2);padding:3px 8px;border-radius:6px;font-size:11px">6 تنبيهات</span>
+        <!-- التنبيهات الذكية -->
+        <div class="panel">
+          <div class="panel-header">
+            <h3>التنبيهات والمراجعات الذكية</h3>
+            <span style="background:rgba(244,63,94,0.1);color:var(--danger);padding:2px 8px;border-radius:6px;font-size:11px">3 تنبيهات حرجة</span>
           </div>
 
-          <div class="alert-item">
-            <div class="alert-icon" style="background:#251216;color:var(--red2)">⚠️</div>
-            <div class="alert-content">
-              <b>3 عملاء لديهم مبالغ متأخرة</b>
-              <p>إجمالي 186,750 ج.م · أقدمها منذ 62 يوماً</p>
-              <a href="#" class="alert-action">مراجعة العملاء ←</a>
+          <div class="alert-card">
+            <div class="alert-icon">⚠️</div>
+            <div class="alert-body">
+              <b>3 عملاء تجاوزوا فترة السداد</b>
+              <p>إجمالي المبالغ المتأخرة 186,750 ج.م · أقدم فاتورة منذ 62 يوماً</p>
             </div>
           </div>
 
-          <div class="alert-item">
-            <div class="alert-icon" style="background:#292215;color:var(--amber)">⚡</div>
-            <div class="alert-content">
-              <b>حركة مصرفية غير مصنفة</b>
-              <p>تحويل صادر بقيمة 47,500 ج.م من بنك CIB</p>
-              <a href="#" class="alert-action">تصنيف الحركة ←</a>
+          <div class="alert-card">
+            <div class="alert-icon">⚡</div>
+            <div class="alert-body">
+              <b>حركة مصرفية واردة غير مصنفة</b>
+              <p>تحويل بقيمة 47,500 ج.م من البنك التجاري الدولي (CIB)</p>
             </div>
           </div>
         </div>
 
-        <!-- حركة الأموال -->
-        <div class="card-section">
-          <div class="card-header">
-            <h3>حركة الأموال</h3>
-            <span style="color:var(--muted);font-size:12px">داخل وخارج الشركة خلال آخر 6 أشهر</span>
+        <!-- تحليل السيولة -->
+        <div class="panel">
+          <div class="panel-header">
+            <h3>مؤشر حركة الأموال</h3>
+            <span style="font-size:12px;color:var(--text-muted)">آخر 6 أشهر</span>
           </div>
-          <div style="height:190px;display:grid;place-items:center;background:var(--bg);border-radius:8px;border:1px dashed var(--line);color:var(--muted);">
-            [ رسم بياني تفاعلي للتدفقات النقدية والمبيعات ]
+          <div style="height:150px;display:grid;place-items:center;background:var(--bg);border:1px dashed var(--border);border-radius:8px;color:var(--text-muted);font-size:12px;">
+            [ منطقة الرسم البياني الاحترافي للتدفقات ]
           </div>
         </div>
 
@@ -176,39 +393,29 @@ body{margin:0;background:var(--bg);color:var(--text);font:13px Alexandria,Arial,
 
     </div>
 
-    <!-- شاشة العملاء (مؤقتة) -->
-    <div id="customers" class="view-section">
-      <h2>إدارة العملاء والمستحقات</h2>
-      <p style="color:var(--muted)">جاري عرض بيانات العملاء المرتبطة بقاعدة البيانات...</p>
-    </div>
-
-    <div id="suppliers" class="view-section">
-      <h2>إدارة الموردين</h2>
-      <p style="color:var(--muted)">جاري عرض حسابات الموردين...</p>
-    </div>
-
-    <div id="banks" class="view-section">
-      <h2>البنوك والخزائن النقدية</h2>
-      <p style="color:var(--muted)">إدارة وتتبع السيولة النقدية...</p>
-    </div>
-
-    <div id="transactions" class="view-section">
-      <h2>سجل الحركات المالية</h2>
-      <p style="color:var(--muted)">دفتر الحركات اليومية...</p>
-    </div>
+    <!-- أقسام الصفحات الأخرى (مؤقتة) -->
+    <div id="customers" class="view-section"><h2>إدارة العملاء</h2></div>
+    <div id="suppliers" class="view-section"><h2>إدارة الموردين</h2></div>
+    <div id="banks" class="view-section"><h2>البنوك والخزائن</h2></div>
 
   </main>
 </div>
 
 <script>
+  // دالة طي وتوسيع القائمة الجانبية
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('collapsed');
+  }
+
+  // دالة التنقل بين الشاشات
   function switchView(viewId, btnElement) {
     document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
     document.getElementById(viewId).classList.add('active');
-    document.querySelectorAll('.nav button').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
     btnElement.classList.add('active');
   }
 </script>
 
 </body>
 </html>
-
