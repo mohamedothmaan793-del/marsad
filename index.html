@@ -227,7 +227,7 @@ body { margin: 0; background: var(--bg); color: var(--text-main); font: 13.5px '
     btnElement.classList.add('active');
   }
 
-  function openModal() { document.getElementById('txModal').classList.add('active'); loadAccountsDropdown(); }
+  function openModal() { document.getElementById('txModal').classList.add('active'); }
   function closeModal() { document.getElementById('txModal').classList.remove('active'); }
 
   const SUPABASE_URL = 'https://fleuwvsgvotkurphekif.supabase.co';
@@ -237,7 +237,6 @@ body { margin: 0; background: var(--bg); color: var(--text-main); font: 13.5px '
 
   async function loadSystemData() {
     try {
-      // 1. جلب الحسابات والبنوك
       const { data: accounts } = await _supabase.from('accounts').select('*');
       let totalLiq = 0;
       let accHtml = '';
@@ -269,7 +268,6 @@ body { margin: 0; background: var(--bg); color: var(--text-main); font: 13.5px '
       window.accountsCache = accounts;
       document.getElementById('txAccount').innerHTML = dropdownHtml;
 
-      // 2. جلب العملاء ومديونياتهم
       const { data: customers } = await _supabase.from('customers').select('*');
       let totalCust = 0;
       let custHtml = '';
@@ -287,7 +285,6 @@ body { margin: 0; background: var(--bg); color: var(--text-main); font: 13.5px '
       document.getElementById('total-customers').innerText = totalCust.toLocaleString() + ' ج.م';
       document.getElementById('customers-list').innerHTML = custHtml;
 
-      // 3. جلب الموردين والتزاماتهم
       const { data: suppliers } = await _supabase.from('suppliers').select('*');
       let totalSupp = 0;
       let suppHtml = '';
@@ -309,10 +306,6 @@ body { margin: 0; background: var(--bg); color: var(--text-main); font: 13.5px '
     } catch (err) {
       console.error(err);
     }
-  }
-
-  async function loadAccountsDropdown() {
-    loadSystemData();
   }
 
   async function saveTransaction() {
@@ -346,7 +339,7 @@ body { margin: 0; background: var(--bg); color: var(--text-main); font: 13.5px '
       alert('تم تسجيل الحركة وتحديث الأرصدة بنجاح!');
       closeModal();
       document.getElementById('txAmount').value = '';
-      document.getElementById('txDesc.value'] = '';
+      document.getElementById('txDesc').value = '';
       loadSystemData();
     }
   }
