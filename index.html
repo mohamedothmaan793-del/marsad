@@ -85,11 +85,7 @@ body { margin: 0; background: var(--bg); color: var(--text-main); font: 13.5px '
 .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
 .panel-header h3 { margin: 0; font-size: 14px; font-weight: 600; }
 
-.alert-card { background: #181820; border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; display: flex; gap: 10px; align-items: flex-start; }
-.alert-body b { display: block; font-size: 12.5px; margin-bottom: 2px; }
-.alert-body p { margin: 0; color: var(--text-muted); font-size: 11.5px; }
-
-/* نافذة الإدخال المنبثقة (Modal) */
+/* نافذة إدخال حركة جديدة */
 .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1000; place-items: center; }
 .modal-overlay.active { display: grid; }
 .modal-box { background: var(--card); border: 1px solid var(--border); border-radius: 14px; width: 420px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -119,9 +115,7 @@ body { margin: 0; background: var(--bg); color: var(--text-main); font: 13.5px '
       <div class="nav-section-title">الرئيسية</div>
       <div class="nav-list">
         <button class="nav-item active" onclick="switchView('dashboard', this)"><i>⚡</i><span>لوحة القيادة</span></button>
-        <button class="nav-item" onclick="switchView('customers', this)"><i>👥</i><span>العملاء والتحصيل</span></button>
-        <button class="nav-item" onclick="switchView('suppliers', this)"><i>📦</i><span>الموردين</span></button>
-        <button class="nav-item" onclick="switchView('banks', this)"><i>🏦</i><span>البنوك والخزائن</span></button>
+        <button class="nav-item" onclick="switchView('accountsView', this)"><i>🏦</i><span>البنوك والحسابات</span></button>
       </div>
     </div>
   </aside>
@@ -130,10 +124,9 @@ body { margin: 0; background: var(--bg); color: var(--text-main); font: 13.5px '
     <header class="top-bar">
       <div class="welcome-box">
         <h1>صباح الخير، محمود 👋</h1>
-        <p>شركة النخبة للتجارة · متصل بقاعدة البيانات</p>
+        <p>شركة النخبة للتجارة · متصل بقاعدة البيانات الحية</p>
       </div>
       <div class="top-actions">
-        <button class="btn btn-sub">تخصيص اللوحة</button>
         <button class="btn btn-main" onclick="openModal()"><span>+ تسجيل حركة جديدة</span></button>
       </div>
     </header>
@@ -141,61 +134,65 @@ body { margin: 0; background: var(--bg); color: var(--text-main); font: 13.5px '
     <div id="dashboard" class="view-section active">
       <section class="metrics-grid">
         <div class="metric-box">
-          <div class="metric-label">السيولة النقدية الحالية</div>
-          <div class="metric-number" id="db-liquidity">1,284,650 <span style="font-size:12px;color:var(--text-muted)">ج.م</span></div>
-          <div class="metric-footer"><span style="color:var(--success)">▲ متصل بـ Supabase</span></div>
+          <div class="metric-label">إجمالي السيولة النقدية</div>
+          <div class="metric-number" id="total-liquidity">جاري التحميل...</div>
+          <div class="metric-footer"><span style="color:var(--success)">البنوك والمحافظ والخزينة</span></div>
         </div>
         <div class="metric-box">
-          <div class="metric-label">إجمالي مستحقات العملاء</div>
-          <div class="metric-number" id="db-customers" style="color:var(--danger)">842,390 <span style="font-size:12px;color:var(--text-muted)">ج.م</span></div>
-          <div class="metric-footer"><span>متابعة التحصيل</span></div>
+          <div class="metric-label">مستحقات العملاء</div>
+          <div class="metric-number" style="color:var(--danger)">0 <span style="font-size:12px;color:var(--text-muted)">ج.م</span></div>
+          <div class="metric-footer"><span>فواتير البيع</span></div>
         </div>
         <div class="metric-box">
           <div class="metric-label">التزامات الموردين</div>
-          <div class="metric-number" id="db-suppliers" style="color:var(--warning)">517,820 <span style="font-size:12px;color:var(--text-muted)">ج.م</span></div>
-          <div class="metric-footer"><span>المستحقات القادمة</span></div>
+          <div class="metric-number" style="color:var(--warning)">0 <span style="font-size:12px;color:var(--text-muted)">ج.م</span></div>
+          <div class="metric-footer"><span>فواتير الشراء</span></div>
         </div>
         <div class="metric-box">
           <div class="metric-label">صافي تدفقات الشهر</div>
-          <div class="metric-number" id="db-net" style="color:var(--accent)">+326,140 <span style="font-size:12px;color:var(--text-muted)">ج.م</span></div>
+          <div class="metric-number" style="color:var(--accent)">0 <span style="font-size:12px;color:var(--text-muted)">ج.م</span></div>
           <div class="metric-footer"><span style="color:var(--success)">أغسطس 2026</span></div>
         </div>
       </section>
 
       <div class="content-grid">
         <div class="panel">
-          <div class="panel-header"><h3>التنبيهات والمراجعات الذكية</h3></div>
-          <div class="alert-card">
-            <div class="alert-body">
-              <b>قاعدة البيانات جاهزة ومستعدة</b>
-              <p>يمكنك الآن تسجيل الحركات الجديدة لتنعكس أوتوماتيكياً.</p>
-            </div>
+          <div class="panel-header"><h3>أرصدة البنوك والمحافظ الحالية</h3></div>
+          <div id="accounts-list" style="display:flex; flex-direction:column; gap:8px;">
+            <p style="color:var(--text-muted)">جاري جلب الحسابات...</p>
           </div>
         </div>
         <div class="panel">
-          <div class="panel-header"><h3>مؤشر حركة الأموال</h3></div>
+          <div class="panel-header"><h3>حركة التدفقات</h3></div>
           <div style="height:140px;display:grid;place-items:center;background:var(--bg);border:1px dashed var(--border);border-radius:8px;color:var(--text-muted);font-size:12px;">
-            [ منطقة الرسم البياني التحليلي ]
+            [ منطقة المؤشرات والرسوم البيانية ]
           </div>
         </div>
       </div>
     </div>
 
-    <div id="customers" class="view-section"><h2>إدارة العملاء</h2></div>
-    <div id="suppliers" class="view-section"><h2>إدارة الموردين</h2></div>
-    <div id="banks" class="view-section"><h2>البنوك والخزائن</h2></div>
+    <div id="accountsView" class="view-section">
+      <h2>إدارة البنوك والمحافظ</h2>
+      <p style="color:var(--text-muted)">قريباً تفاصيل الحسابات وتعديل أرصدتها.</p>
+    </div>
   </main>
 </div>
 
-<!-- نافذة إدخال حركة جديدة (Modal) -->
+<!-- نافذة إدخال حركة جديدة -->
 <div class="modal-overlay" id="txModal">
   <div class="modal-box">
     <h3>تسجيل حركة مالية جديدة</h3>
     <div class="form-group">
       <label>نوع الحركة</label>
       <select id="txType">
-        <option value="إيراد">إيراد (قبض)</option>
-        <option value="مصروف">مصروف (صرف)</option>
+        <option value="in">إيراد / قبض (إضافة للرصيد)</option>
+        <option value="out">مصروف / صرف ( خصم من الرصيد)</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>اختر الحساب / البنك / إنستا باي</label>
+      <select id="txAccount">
+        <!-- يتم تعبئتها ديناميكياً من قاعدة البيانات -->
       </select>
     </div>
     <div class="form-group">
@@ -204,11 +201,11 @@ body { margin: 0; background: var(--bg); color: var(--text-main); font: 13.5px '
     </div>
     <div class="form-group">
       <label>البيان / الوصف</label>
-      <input type="text" id="txDesc" placeholder="مثال: قيمة دفعة من العميل">
+      <input type="text" id="txDesc" placeholder="مثال: دفعة من عميل / مصروفات إدارية">
     </div>
     <div class="modal-actions">
       <button class="btn btn-sub" onclick="closeModal()">إلغاء</button>
-      <button class="btn btn-main" onclick="saveTransaction()">حفظ الحركة</button>
+      <button class="btn btn-main" onclick="saveTransaction()">حفظ الحركة وتحديث الرصيد</button>
     </div>
   </div>
 </div>
@@ -222,40 +219,92 @@ body { margin: 0; background: var(--bg); color: var(--text-main); font: 13.5px '
     btnElement.classList.add('active');
   }
 
-  function openModal() { document.getElementById('txModal').classList.add('active'); }
+  function openModal() { document.getElementById('txModal').classList.add('active'); loadAccountsDropdown(); }
   function closeModal() { document.getElementById('txModal').classList.remove('active'); }
 
-  // Supabase Connection
   const SUPABASE_URL = 'https://fleuwvsgvotkurphekif.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_6o2sgbxpnjfm-EWyfcD0cg_y5WOxtX1';
   const { createClient } = window.supabase;
   const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+  async function loadDashboard() {
+    try {
+      const { data: accounts, error } = await _supabase.from('accounts').select('*');
+      if (error) throw error;
+
+      let total = 0;
+      let html = '';
+      let dropdownHtml = '';
+
+      accounts.forEach(acc => {
+        total += Number(acc.balance);
+        html += `
+          <div style="display:flex; justify-content:space-between; padding:10px; background:var(--bg); border:1px solid var(--border); border-radius:8px;">
+            <span>${acc.name} <small style="color:var(--text-muted)">(${acc.type})</small></span>
+            <b>${Number(acc.balance).toLocaleString()} ج.م</b>
+          </div>
+        `;
+        dropdownHtml += `<option value="${acc.id}">${acc.name} (الرصيد: ${acc.balance})</option>`;
+      });
+
+      document.getElementById('total-liquidity').innerHTML = total.toLocaleString() + ' <span style="font-size:12px;color:var(--text-muted)">ج.م</span>';
+      document.getElementById('accounts-list').innerHTML = html;
+      window.accountsCache = accounts;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function loadAccountsDropdown() {
+    const { data: accounts } = await _supabase.from('accounts').select('*');
+    let dropdownHtml = '';
+    if (accounts) {
+      accounts.forEach(acc => {
+        dropdownHtml += `<option value="${acc.id}">${acc.name} (الحالي: ${acc.balance} ج.م)</option>`;
+      });
+    }
+    document.getElementById('txAccount').innerHTML = dropdownHtml;
+  }
+
   async function saveTransaction() {
     const type = document.getElementById('txType').value;
+    const accountId = document.getElementById('txAccount').value;
     const amount = parseFloat(document.getElementById('txAmount').value);
     const description = document.getElementById('txDesc').value;
 
     if (!amount || !description) {
-      alert('من فضلك أدخل المبلغ والوصف بشكل صحيح');
+      alert('من فضلك أدخل المبلغ والوصف');
       return;
     }
 
-    // إرسال البيانات لجدول transactions في Supabase
-    const { data, error } = await _supabase.from('transactions').insert([
-      { type: type, amount: amount, description: description, date: new Date().toISOString().split('T')[0], reference: 'REF-' + Math.floor(Math.random()*1000) }
+    // 1. تسجيل الحركة
+    const { error: txError } = await _supabase.from('transactions').insert([
+      { type: type, amount: amount, account_id: accountId, description: description, date: new Date().toISOString().split('T')[0] }
     ]);
 
-    if (error) {
-      alert('حدث خطأ أثناء الحفظ: ' + error.message);
+    if (txError) {
+      alert('خطأ في حفظ الحركة: ' + txError.message);
+      return;
+    }
+
+    // 2. تحديث رصيد الحساب المختار بناءً على نوع الحركة (قبض أو صرف)
+    const targetAccount = window.accountsCache.find(a => a.id == accountId);
+    let newBalance = type === 'in' ? Number(targetAccount.balance) + amount : Number(targetAccount.balance) - amount;
+
+    const { error: accError } = await _supabase.from('accounts').update({ balance: newBalance }).eq('id', accountId);
+
+    if (accError) {
+      alert('خطأ في تحديث رصيد الحساب: ' + accError.message);
     } else {
-      alert('تم حفظ الحركة بنجاح في قاعدة البيانات!');
+      alert('تم تسجيل الحركة وتحديث رصيد البنك/المحفظة بنجاح!');
       closeModal();
-      // تفريغ الحقول
       document.getElementById('txAmount').value = '';
       document.getElementById('txDesc').value = '';
+      loadDashboard();
     }
   }
+
+  loadDashboard();
 </script>
 
 </body>
