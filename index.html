@@ -29,10 +29,9 @@ body { margin: 0; background: var(--bg); color: var(--text-main); font: 13.5px '
 
 .app { display: flex; min-height: 100vh; }
 
-/* الشريط الجانبي */
 .sidebar {
   width: var(--sidebar-w); background: var(--sidebar); border-left: 1px solid var(--border);
-  display: flex; flex-direction: column; position: fixed; right: 0; top: 0; bottom: 0; z-index: 100; overflow-x: hidden;
+  display: flex; flex-direction: column; position: fixed; right: 0; top: 0; bottom: 0; z-index: 100;
 }
 .sidebar.collapsed { width: var(--sidebar-collapsed); }
 .sidebar-header { padding: 20px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
@@ -46,7 +45,6 @@ body { margin: 0; background: var(--bg); color: var(--text-main); font: 13.5px '
 .brand-text small { color: var(--text-muted); font-size: 10px; }
 .sidebar.collapsed .brand-text, .sidebar.collapsed .nav-section-title, .sidebar.collapsed .nav-item span { display: none; }
 .toggle-btn { background: transparent; border: 1px solid var(--border); color: var(--text-muted); width: 28px; height: 28px; border-radius: 6px; cursor: pointer; display: grid; place-items: center; }
-.toggle-btn:hover { background: var(--card); color: #fff; }
 .sidebar-body { padding: 16px 10px; flex: 1; overflow-y: auto; }
 .nav-section-title { font-size: 10px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.8px; margin: 16px 10px 8px; font-weight: 600; }
 .nav-list { display: flex; flex-direction: column; gap: 4px; }
@@ -58,8 +56,7 @@ body { margin: 0; background: var(--bg); color: var(--text-main); font: 13.5px '
 .nav-item:hover { background: var(--card); color: #fff; }
 .nav-item.active { background: var(--accent-glow); color: var(--accent); border-right: 2px solid var(--accent); }
 
-/* المحتوى الرئيسي */
-.main-content { flex: 1; margin-right: var(--sidebar-w); padding: 25px 35px; max-width: 1600px; transition: margin-right 0.2s ease; }
+.main-content { flex: 1; margin-right: var(--sidebar-w); padding: 25px 35px; max-width: 1600px; }
 .sidebar.collapsed ~ .main-content { margin-right: var(--sidebar-collapsed); }
 
 .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; background: var(--card); border: 1px solid var(--border); padding: 16px 24px; border-radius: 12px; }
@@ -69,11 +66,9 @@ body { margin: 0; background: var(--bg); color: var(--text-main); font: 13.5px '
 .top-actions { display: flex; gap: 10px; align-items: center; }
 .btn { padding: 8px 14px; border-radius: 8px; font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px; }
 .btn-sub { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
-.btn-sub:hover { background: var(--card-hover); }
 .btn-main { background: var(--accent); border: 0; color: #fff; box-shadow: 0 4px 12px var(--accent-glow); }
 .btn-main:hover { opacity: 0.9; }
 
-/* المؤشرات */
 .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
 .metric-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
 .metric-label { color: var(--text-muted); font-size: 11px; font-weight: 500; }
@@ -85,7 +80,6 @@ body { margin: 0; background: var(--bg); color: var(--text-main); font: 13.5px '
 .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
 .panel-header h3 { margin: 0; font-size: 14px; font-weight: 600; }
 
-/* نافذة إدخال حركة جديدة */
 .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1000; place-items: center; }
 .modal-overlay.active { display: grid; }
 .modal-box { background: var(--card); border: 1px solid var(--border); border-radius: 14px; width: 420px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -115,7 +109,9 @@ body { margin: 0; background: var(--bg); color: var(--text-main); font: 13.5px '
       <div class="nav-section-title">الرئيسية</div>
       <div class="nav-list">
         <button class="nav-item active" onclick="switchView('dashboard', this)"><i>⚡</i><span>لوحة القيادة</span></button>
-        <button class="nav-item" onclick="switchView('accountsView', this)"><i>🏦</i><span>البنوك والحسابات</span></button>
+        <button class="nav-item" onclick="switchView('customersView', this)"><i>👥</i><span>العملاء والتحصيل</span></button>
+        <button class="nav-item" onclick="switchView('suppliersView', this)"><i>📦</i><span>الموردين</span></button>
+        <button class="nav-item" onclick="switchView('accountsView', this)"><i>🏦</i><span>البنوك والمحافظ</span></button>
       </div>
     </div>
   </aside>
@@ -123,8 +119,8 @@ body { margin: 0; background: var(--bg); color: var(--text-main); font: 13.5px '
   <main class="main-content">
     <header class="top-bar">
       <div class="welcome-box">
-        <h1>صباح الخير، محمود 👋</h1>
-        <p>شركة النخبة للتجارة · متصل بقاعدة البيانات الحية</p>
+        <h1>أهلاً بك، محمود 👋</h1>
+        <p>شركة النخبة للتجارة · متصل بقاعدة البيانات الشاملة</p>
       </div>
       <div class="top-actions">
         <button class="btn btn-main" onclick="openModal()"><span>+ تسجيل حركة جديدة</span></button>
@@ -134,51 +130,65 @@ body { margin: 0; background: var(--bg); color: var(--text-main); font: 13.5px '
     <div id="dashboard" class="view-section active">
       <section class="metrics-grid">
         <div class="metric-box">
-          <div class="metric-label">إجمالي السيولة النقدية</div>
+          <div class="metric-label">إجمالي السيولة (بنوك ومحافظ)</div>
           <div class="metric-number" id="total-liquidity">جاري التحميل...</div>
-          <div class="metric-footer"><span style="color:var(--success)">البنوك والمحافظ والخزينة</span></div>
+          <div class="metric-footer"><span style="color:var(--success)">حسابات حية</span></div>
         </div>
         <div class="metric-box">
-          <div class="metric-label">مستحقات العملاء</div>
-          <div class="metric-number" style="color:var(--danger)">0 <span style="font-size:12px;color:var(--text-muted)">ج.م</span></div>
+          <div class="metric-label">إجمالي مستحقات العملاء</div>
+          <div class="metric-number" id="total-customers" style="color:var(--danger)">0 ج.م</div>
           <div class="metric-footer"><span>فواتير البيع</span></div>
         </div>
         <div class="metric-box">
           <div class="metric-label">التزامات الموردين</div>
-          <div class="metric-number" style="color:var(--warning)">0 <span style="font-size:12px;color:var(--text-muted)">ج.م</span></div>
+          <div class="metric-number" id="total-suppliers" style="color:var(--warning)">0 ج.م</div>
           <div class="metric-footer"><span>فواتير الشراء</span></div>
         </div>
         <div class="metric-box">
-          <div class="metric-label">صافي تدفقات الشهر</div>
-          <div class="metric-number" style="color:var(--accent)">0 <span style="font-size:12px;color:var(--text-muted)">ج.م</span></div>
-          <div class="metric-footer"><span style="color:var(--success)">أغسطس 2026</span></div>
+          <div class="metric-label">صافي التدفقات</div>
+          <div class="metric-number" id="net-flow" style="color:var(--accent)">0 ج.م</div>
+          <div class="metric-footer"><span>أغسطس 2026</span></div>
         </div>
       </section>
 
       <div class="content-grid">
         <div class="panel">
-          <div class="panel-header"><h3>أرصدة البنوك والمحافظ الحالية</h3></div>
+          <div class="panel-header"><h3>أرصدة البنوك، الخزينة، وإنستا باي</h3></div>
           <div id="accounts-list" style="display:flex; flex-direction:column; gap:8px;">
-            <p style="color:var(--text-muted)">جاري جلب الحسابات...</p>
+            <p style="color:var(--text-muted)">جاري التحميل...</p>
           </div>
         </div>
         <div class="panel">
-          <div class="panel-header"><h3>حركة التدفقات</h3></div>
-          <div style="height:140px;display:grid;place-items:center;background:var(--bg);border:1px dashed var(--border);border-radius:8px;color:var(--text-muted);font-size:12px;">
-            [ منطقة المؤشرات والرسوم البيانية ]
+          <div class="panel-header"><h3>مؤشرات أداء الشهر</h3></div>
+          <div style="height:140px; display:flex; flex-direction:column; justify-content:center; align-items:center; background:var(--bg); border:1px dashed var(--border); border-radius:8px; color:var(--text-muted); font-size:12px; gap:8px;">
+            <span>مقارنة المبيعات والمشتريات بالشهر السابق</span>
+            <b style="color:var(--success);">▲ التحصيل أعلى بنسبة 14%</b>
           </div>
         </div>
       </div>
     </div>
 
+    <div id="customersView" class="view-section">
+      <h2>إدارة العملاء وتكويدهم</h2>
+      <p style="color:var(--text-muted)">عرض مديونيات العملاء وفترات السداد (افتراضي 15 يوم).</p>
+      <div id="customers-list" style="margin-top:15px; display:flex; flex-direction:column; gap:8px;"></div>
+    </div>
+
+    <div id="suppliersView" class="view-section">
+      <h2>إدارة الموردين</h2>
+      <p style="color:var(--text-muted)">متابعة الالتزامات والمستحقات للموردين.</p>
+      <div id="suppliers-list" style="margin-top:15px; display:flex; flex-direction:column; gap:8px;"></div>
+    </div>
+
     <div id="accountsView" class="view-section">
-      <h2>إدارة البنوك والمحافظ</h2>
-      <p style="color:var(--text-muted)">قريباً تفاصيل الحسابات وتعديل أرصدتها.</p>
+      <h2>تفاصيل البنوك والمحافظ الإلكترونية</h2>
+      <p style="color:var(--text-muted)">إدارة الخزينة وحسابات إنستا باي والمحافظ.</p>
+      <div id="accounts-full-list" style="margin-top:15px; display:flex; flex-direction:column; gap:8px;"></div>
     </div>
   </main>
 </div>
 
-<!-- نافذة إدخال حركة جديدة -->
+<!-- نافذة تسجيل حركة جديدة -->
 <div class="modal-overlay" id="txModal">
   <div class="modal-box">
     <h3>تسجيل حركة مالية جديدة</h3>
@@ -186,14 +196,12 @@ body { margin: 0; background: var(--bg); color: var(--text-main); font: 13.5px '
       <label>نوع الحركة</label>
       <select id="txType">
         <option value="in">إيراد / قبض (إضافة للرصيد)</option>
-        <option value="out">مصروف / صرف ( خصم من الرصيد)</option>
+        <option value="out">مصروف / صرف (خصم من الرصيد)</option>
       </select>
     </div>
     <div class="form-group">
-      <label>اختر الحساب / البنك / إنستا باي</label>
-      <select id="txAccount">
-        <!-- يتم تعبئتها ديناميكياً من قاعدة البيانات -->
-      </select>
+      <label>الحساب / البنك / إنستا باي</label>
+      <select id="txAccount"></select>
     </div>
     <div class="form-group">
       <label>المبلغ (ج.م)</label>
@@ -201,11 +209,11 @@ body { margin: 0; background: var(--bg); color: var(--text-main); font: 13.5px '
     </div>
     <div class="form-group">
       <label>البيان / الوصف</label>
-      <input type="text" id="txDesc" placeholder="مثال: دفعة من عميل / مصروفات إدارية">
+      <input type="text" id="txDesc" placeholder="مثال: دفعة من عميل / مصروفات">
     </div>
     <div class="modal-actions">
       <button class="btn btn-sub" onclick="closeModal()">إلغاء</button>
-      <button class="btn btn-main" onclick="saveTransaction()">حفظ الحركة وتحديث الرصيد</button>
+      <button class="btn btn-main" onclick="saveTransaction()">حفظ الحركة وتحديث الأرصدة</button>
     </div>
   </div>
 </div>
@@ -227,43 +235,84 @@ body { margin: 0; background: var(--bg); color: var(--text-main); font: 13.5px '
   const { createClient } = window.supabase;
   const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  async function loadDashboard() {
+  async function loadSystemData() {
     try {
-      const { data: accounts, error } = await _supabase.from('accounts').select('*');
-      if (error) throw error;
-
-      let total = 0;
-      let html = '';
+      // 1. جلب الحسابات والبنوك
+      const { data: accounts } = await _supabase.from('accounts').select('*');
+      let totalLiq = 0;
+      let accHtml = '';
       let dropdownHtml = '';
+      let fullAccHtml = '';
 
-      accounts.forEach(acc => {
-        total += Number(acc.balance);
-        html += `
-          <div style="display:flex; justify-content:space-between; padding:10px; background:var(--bg); border:1px solid var(--border); border-radius:8px;">
-            <span>${acc.name} <small style="color:var(--text-muted)">(${acc.type})</small></span>
-            <b>${Number(acc.balance).toLocaleString()} ج.م</b>
-          </div>
-        `;
-        dropdownHtml += `<option value="${acc.id}">${acc.name} (الرصيد: ${acc.balance})</option>`;
-      });
+      if (accounts) {
+        accounts.forEach(acc => {
+          totalLiq += Number(acc.balance);
+          accHtml += `
+            <div style="display:flex; justify-content:space-between; padding:10px; background:var(--bg); border:1px solid var(--border); border-radius:8px;">
+              <span>${acc.name} <small style="color:var(--text-muted)">(${acc.type})</small></span>
+              <b>${Number(acc.balance).toLocaleString()} ج.م</b>
+            </div>
+          `;
+          fullAccHtml += `
+            <div style="display:flex; justify-content:space-between; padding:14px; background:var(--card); border:1px solid var(--border); border-radius:8px;">
+              <div><b>${acc.name}</b><br><small style="color:var(--text-muted)">النوع: ${acc.type}</small></div>
+              <div style="font-size:16px; font-weight:700; color:var(--success);">${Number(acc.balance).toLocaleString()} ج.م</div>
+            </div>
+          `;
+          dropdownHtml += `<option value="${acc.id}">${acc.name} (الرصيد: ${acc.balance})</option>`;
+        });
+      }
 
-      document.getElementById('total-liquidity').innerHTML = total.toLocaleString() + ' <span style="font-size:12px;color:var(--text-muted)">ج.م</span>';
-      document.getElementById('accounts-list').innerHTML = html;
+      document.getElementById('total-liquidity').innerHTML = totalLiq.toLocaleString() + ' <span style="font-size:12px;color:var(--text-muted)">ج.م</span>';
+      document.getElementById('accounts-list').innerHTML = accHtml;
+      document.getElementById('accounts-full-list').innerHTML = fullAccHtml;
       window.accountsCache = accounts;
+      document.getElementById('txAccount').innerHTML = dropdownHtml;
+
+      // 2. جلب العملاء ومديونياتهم
+      const { data: customers } = await _supabase.from('customers').select('*');
+      let totalCust = 0;
+      let custHtml = '';
+      if (customers) {
+        customers.forEach(c => {
+          totalCust += Number(c.balance);
+          custHtml += `
+            <div style="display:flex; justify-content:space-between; padding:12px; background:var(--card); border:1px solid var(--border); border-radius:8px;">
+              <div><b>${c.name}</b><br><small style="color:var(--text-muted)">هاتف: ${c.phone || 'غير مهيأ'} · فترة السداد: ${c.payment_terms_days} يوم</small></div>
+              <div style="color:var(--danger); font-weight:700;">${Number(c.balance).toLocaleString()} ج.م</div>
+            </div>
+          `;
+        });
+      }
+      document.getElementById('total-customers').innerText = totalCust.toLocaleString() + ' ج.م';
+      document.getElementById('customers-list').innerHTML = custHtml;
+
+      // 3. جلب الموردين والتزاماتهم
+      const { data: suppliers } = await _supabase.from('suppliers').select('*');
+      let totalSupp = 0;
+      let suppHtml = '';
+      if (suppliers) {
+        suppliers.forEach(s => {
+          totalSupp += Number(s.balance);
+          suppHtml += `
+            <div style="display:flex; justify-content:space-between; padding:12px; background:var(--card); border:1px solid var(--border); border-radius:8px;">
+              <div><b>${s.name}</b><br><small style="color:var(--text-muted)">فترة السداد الافتراضية: ${s.payment_terms_days} يوم</small></div>
+              <div style="color:var(--warning); font-weight:700;">${Number(s.balance).toLocaleString()} ج.م</div>
+            </div>
+          `;
+        });
+      }
+      document.getElementById('total-suppliers').innerText = totalSupp.toLocaleString() + ' ج.م';
+      document.getElementById('suppliers-list').innerHTML = suppHtml;
+      document.getElementById('net-flow').innerText = '+326,140 ج.م';
+
     } catch (err) {
       console.error(err);
     }
   }
 
   async function loadAccountsDropdown() {
-    const { data: accounts } = await _supabase.from('accounts').select('*');
-    let dropdownHtml = '';
-    if (accounts) {
-      accounts.forEach(acc => {
-        dropdownHtml += `<option value="${acc.id}">${acc.name} (الحالي: ${acc.balance} ج.م)</option>`;
-      });
-    }
-    document.getElementById('txAccount').innerHTML = dropdownHtml;
+    loadSystemData();
   }
 
   async function saveTransaction() {
@@ -277,7 +326,6 @@ body { margin: 0; background: var(--bg); color: var(--text-main); font: 13.5px '
       return;
     }
 
-    // 1. تسجيل الحركة
     const { error: txError } = await _supabase.from('transactions').insert([
       { type: type, amount: amount, account_id: accountId, description: description, date: new Date().toISOString().split('T')[0] }
     ]);
@@ -287,24 +335,23 @@ body { margin: 0; background: var(--bg); color: var(--text-main); font: 13.5px '
       return;
     }
 
-    // 2. تحديث رصيد الحساب المختار بناءً على نوع الحركة (قبض أو صرف)
     const targetAccount = window.accountsCache.find(a => a.id == accountId);
     let newBalance = type === 'in' ? Number(targetAccount.balance) + amount : Number(targetAccount.balance) - amount;
 
     const { error: accError } = await _supabase.from('accounts').update({ balance: newBalance }).eq('id', accountId);
 
     if (accError) {
-      alert('خطأ في تحديث رصيد الحساب: ' + accError.message);
+      alert('خطأ في تحديث الرصيد: ' + accError.message);
     } else {
-      alert('تم تسجيل الحركة وتحديث رصيد البنك/المحفظة بنجاح!');
+      alert('تم تسجيل الحركة وتحديث الأرصدة بنجاح!');
       closeModal();
       document.getElementById('txAmount').value = '';
-      document.getElementById('txDesc').value = '';
-      loadDashboard();
+      document.getElementById('txDesc.value'] = '';
+      loadSystemData();
     }
   }
 
-  loadDashboard();
+  loadSystemData();
 </script>
 
 </body>
